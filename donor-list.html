@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Donor List</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px 12px;
+  background: #f7f7f7;
+  font-family: Arial, sans-serif;
+  color: #222;
+}
+
+.container {
+  max-width: 650px;
+  margin: auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+}
+
+h2 {
+  text-align: center;
+  color: #df2027;
+  margin-top: 0;
+}
+
+#searchInfo {
+  background: #fff0f0;
+  padding: 12px;
+  border-radius: 8px;
+  line-height: 1.8;
+}
+
+.donor-card {
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 15px;
+  box-shadow: 0 2px 6px #00000008;
+}
+
+.donor-card h3 {
+  color: #d91e26;
+  margin: 0 0 12px;
+}
+
+.info {
+  margin: 9px 0;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.blood {
+  display: inline-block;
+  background: #ffe6e6;
+  color: #d71920;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.address-btn {
+  color: #075fc7;
+  text-decoration: underline;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 15px;
+  padding: 0;
+  text-align: left;
+}
+
+.address-details {
+  display: none;
+  background: #f3f7ff;
+  border-radius: 7px;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+.address-details.show {
+  display: block;
+}
+
+.phone-btn {
+  display: inline-block;
+  background: #198754;
+  color: white;
+  padding: 10px 16px;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+#empty {
+  display: none;
+  text-align: center;
+  padding: 25px 5px;
+  color: #b91c1c;
+}
+
+.back-btn {
+  display: block;
+  text-align: center;
+  color: #d71920;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>Blood Donor List</h2>
+
+  <div id="searchInfo"></div>
+
+  <div id="donorList"></div>
+
+  <div id="empty">
+    <h3>কোনো Donor পাওয়া যায়নি!</h3>
+    <p>অন্য Blood Group বা এলাকা নির্বাচন করে আবার Search করুন।</p>
+  </div>
+
+  <a href="search.html" class="back-btn">
+    ← Back to Search
+  </a>
+
+</div>
+
+<script>
+/*
+  ডেমো ডেটা।
+  পরে এখানে Backend / Database-এর Donor
+  ডেটা যুক্ত করতে হবে।
+*/
+const donors = [
+  {
+    id: 1,
+    name: "Rahim Ahmed",
+    bloodGroup: "A+",
+    phone: "01700000001",
+    age: 25,
+    dob: "2001-05-12",
+    lastDonateDate: "2026-07-10",
+    district: "Dhaka",
+    thana: "Mirpur",
+    address: "Mirpur-10, Dhaka"
+  },
+  {
+    id: 2,
+    name: "Karim Hasan",
+    bloodGroup: "A+",
+    phone: "01800000002",
+    age: 28,
+    dob: "1998-03-20",
+    lastDonateDate: "2026-05-15",
+    district: "Dhaka",
+    thana: "Uttara",
+    address: "Sector 7, Uttara, Dhaka"
+  },
+  {
+    id: 3,
+    name: "Sakib Hossain",
+    bloodGroup: "B+",
+    phone: "01900000003",
+    age: 23,
+    dob: "2003-01-08",
+    lastDonateDate: "2026-06-01",
+    district: "Khulna",
+    thana: "Paikgacha",
+    address: "Paikgacha, Khulna"
+  }
+];
+
+const params = new URLSearchParams(location.search);
+
+const selectedBlood = params.get("bloodGroup") || "";
+const selectedDistrict = params.get("district") || "";
+const selectedThana = params.get("thana") || "";
+
+document.getElementById("searchInfo").innerHTML =
+  "<b>Blood Group:</b> " + safe(selectedBlood || "সব") +
+  "<br><b>District:</b> " + safe(selectedDistrict || "সব") +
+  "<br><b>Thana:</b> " + safe(selectedThana || "সব");
+
+function safe(value) {
+  const el = document.createElement("span");
+  el.textContent = value;
+  return el.innerHTML;
+}
+
+function formatDate(date) {
+  if (!date) return "তথ্য নেই";
+
+  const parts = date.split("-");
+  if (parts.length !== 3) return date;
+
+  return parts[2] + "-" + parts[1] + "-" + parts[0];
+}
+
+function calculateAge(dob) {
+  if (!dob) return "তথ্য নেই";
+
+  const birth = new Date(dob + "T00:00:00");
+  if (Number.isNaN(birth.getTime())) return "তথ্য নেই";
+
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+
+  const beforeBirthday =
+    today.getMonth() < birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() &&
+     today.getDate() < birth.getDate());
+
+  if (beforeBirthday) age--;
+
+  return age >= 0 ? age : "তথ্য নেই";
+}
+
+const filteredDonors = donors.filter(donor =>
+  (!selectedBlood ||
+   donor.bloodGroup === selectedBlood) &&
+
+  (!selectedDistrict ||
+   donor.district === selectedDistrict) &&
+
+  (!selectedThana ||
+   donor.thana === selectedThana)
+);
+
+const donorList = document.getElementById("donorList");
+
+if (filteredDonors.length === 0) {
+  document.getElementById("empty").style.display = "block";
+}
+
+filteredDonors.forEach(donor => {
+  const card = document.createElement("div");
+  card.className = "donor-card";
+
+  card.innerHTML = `
+    <h3>${safe(donor.name)}</h3>
+
+    <div class="info">
+      <span class="blood">
+        ${safe(donor.bloodGroup)}
+      </span>
+    </div>
+
+    <div class="info">
+      <b>Phone Number:</b>
+      ${safe(donor.phone)}
+    </div>
+
+    <div class="info">
+      <b>Age:</b>
+      ${calculateAge(donor.dob)} বছর
+    </div>
+
+    <div class="info">
+      <b>Date of Birth:</b>
+      ${formatDate(donor.dob)}
+    </div>
+
+    <div class="info">
+      <b>Last Donate Date:</b>
+      ${formatDate(donor.lastDonateDate)}
+    </div>
+
+    <div class="info">
+      <b>Address:</b>
+      <button class="address-btn" type="button">
+        ${safe(donor.address)} ▼
+      </button>
+
+      <div class="address-details">
+        <b>District:</b> ${safe(donor.district)}
+        <br>
+        <b>Thana:</b> ${safe(donor.thana)}
+      </div>
+    </div>
+
+    <a class="phone-btn"
+       href="tel:${encodeURIComponent(donor.phone)}">
+       ☎ Call Donor
+    </a>
+  `;
+
+  const addressBtn = card.querySelector(".address-btn");
+  const details = card.querySelector(".address-details");
+
+  addressBtn.addEventListener("click", () => {
+    details.classList.toggle("show");
+    addressBtn.textContent =
+      donor.address + (details.classList.contains("show")
+        ? " ▲" : " ▼");
+  });
+
+  donorList.appendChild(card);
+});
+</script>
+
+</body>
+</html>

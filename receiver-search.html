@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Blood Donor</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px 12px;
+  background: #fff0f1;
+  font-family: Arial, sans-serif;
+  color: #222;
+}
+
+.container {
+  max-width: 460px;
+  margin: auto;
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+}
+
+h2 {
+  color: #e52329;
+  text-align: center;
+  margin-top: 0;
+  font-size: 24px;
+}
+
+.subtitle {
+  text-align: center;
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin: 17px 0 8px;
+}
+
+select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #d6d6d6;
+  border-radius: 9px;
+  background: white;
+  font-size: 16px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.search-btn {
+  width: 100%;
+  padding: 15px;
+  margin-top: 24px;
+  border: none;
+  border-radius: 8px;
+  background: #e52329;
+  color: white;
+  font-size: 17px;
+}
+
+.search-btn:hover {
+  background: #c91c23;
+}
+
+.message {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fff0f0;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+.donor-card {
+  border: 1px solid #ddd;
+  border-radius: 9px;
+  padding: 14px;
+  margin-top: 15px;
+  overflow-wrap: anywhere;
+}
+
+.donor-card h3 {
+  color: #e52329;
+  margin-top: 0;
+}
+
+.blood {
+  display: inline-block;
+  background: #ffe4e4;
+  color: #c91c23;
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.info {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.address-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #075fc7;
+  text-decoration: underline;
+  font-size: 15px;
+  text-align: left;
+}
+
+.address-details {
+  display: none;
+  background: #f0f5ff;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 6px;
+  line-height: 1.8;
+}
+
+.address-details.show {
+  display: block;
+}
+
+.call-btn {
+  display: inline-block;
+  background: #198754;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-top: 5px;
+}
+
+.back-btn {
+  display: block;
+  text-align: center;
+  margin-top: 22px;
+  color: #d91e26;
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>Find Blood Donor</h2>
+
+  <p class="subtitle">
+    আপনার প্রয়োজনীয় রক্তের গ্রুপ ও অবস্থান নির্বাচন করুন।
+  </p>
+
+  <form id="searchForm">
+
+    <label for="bloodGroup">
+      Blood Group / রক্তের গ্রুপ
+    </label>
+
+    <select id="bloodGroup" required>
+      <option value="">রক্তের গ্রুপ নির্বাচন করুন</option>
+      <option value="A+">A+</option>
+      <option value="A-">A-</option>
+      <option value="B+">B+</option>
+      <option value="B-">B-</option>
+      <option value="AB+">AB+</option>
+      <option value="AB-">AB-</option>
+      <option value="O+">O+</option>
+      <option value="O-">O-</option>
+    </select>
+
+    <label for="district">District / জেলা</label>
+
+    <select id="district" required>
+      <option value="">জেলা নির্বাচন করুন</option>
+    </select>
+
+    <label for="thana">Thana / থানা</label>
+
+    <select id="thana" required>
+      <option value="">থানা নির্বাচন করুন</option>
+    </select>
+
+    <button type="submit" class="search-btn">
+      🔍 Search Blood
+    </button>
+
+  </form>
+
+  <div id="results" aria-live="polite"></div>
+
+  
+  <div class="message">
+    <b>নোট:</b> এই পেজে একই Browser-এর localStorage-এ
+    সংরক্ষিত Donor-দের তথ্য Search করা হবে।
+  </div>
+
+</div>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "bloodDonorDatabase_v1";
+
+const $ = id => document.getElementById(id);
+
+function getDonors() {
+  try {
+    const data = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
+    return Array.isArray(data) ? data.filter(d =>
+      d && typeof d === "object" &&
+      typeof d.name === "string" &&
+      typeof d.phone === "string" &&
+      typeof d.bloodGroup === "string" &&
+      typeof d.district === "string" &&
+      typeof d.thana === "string" &&
+      typeof d.dob === "string" &&
+      typeof d.address === "string"
+    ) : [];
+  } catch {
+    return [];
+  }
+}
+
+function norm(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function addOption(select, value, text) {
+  const option = document.createElement("option");
+  option.value = value;
+  option.textContent = text;
+  select.appendChild(option);
+}
+
+
+
+function loadDistricts() {
+  const select = $("district");
+  select.replaceChildren();
+
+  addOption(select, "", "জেলা নির্বাচন করুন");
+  addOption(select, "Dhaka", "Dhaka");
+}
+
+
+
+function loadThanas() {
+  const district = $("district").value;
+  const select = $("thana");
+
+  select.replaceChildren();
+  addOption(select, "", "থানা নির্বাচন করুন");
+
+  if (district === "Dhaka") {
+    const thanas = [
+      "Dhanmondi",
+      "Mirpur",
+      "Uttara",
+      "Gulshan",
+      "Banani",
+      "Mohammadpur",
+      "Pallabi",
+      "Tejgaon",
+      "Ramna",
+      "Motijheel",
+      "Kafrul",
+      "Badda",
+      "Jatrabari",
+      "Demra",
+      "Adabor",
+      "Airport",
+      "Turag"
+    ];
+
+    thanas.forEach(thana => {
+      addOption(select, thana, thana);
+    });
+  }
+}
+
+
+$("district").addEventListener("change", loadThanas);
+
+function dateText(value) {
+  if (!value) return "তথ্য দেওয়া হয়নি";
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return "তথ্য নেই";
+
+  return match[3] + "-" + match[2] + "-" + match[1];
+}
+
+function ageFromDOB(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return "তথ্য নেই";
+
+  const birth = new Date(
+    Number(match[1]), Number(match[2]) - 1, Number(match[3])
+  );
+
+  if (
+    birth.getFullYear() !== Number(match[1]) ||
+    birth.getMonth() !== Number(match[2]) - 1 ||
+    birth.getDate() !== Number(match[3]) ||
+    birth > new Date()
+  ) return "তথ্য নেই";
+
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+
+  if (
+    now.getMonth() < birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() &&
+     now.getDate() < birth.getDate())
+  ) age--;
+
+  return age >= 0 ? age + " বছর" : "তথ্য নেই";
+}
+
+function element(tag, text, className) {
+  const el = document.createElement(tag);
+  el.textContent = text;
+  if (className) el.className = className;
+  return el;
+}
+
+function addInfo(card, label, value) {
+  const row = document.createElement("div");
+  row.className = "info";
+  row.appendChild(element("b", label + ": "));
+  row.appendChild(document.createTextNode(value || "তথ্য নেই"));
+  card.appendChild(row);
+}
+
+$("searchForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const blood = $("bloodGroup").value;
+  const district = $("district").value;
+  const thana = $("thana").value;
+
+  const matches = getDonors().filter(d =>
+    d.bloodGroup === blood &&
+    norm(d.district) === norm(district) &&
+    norm(d.thana) === norm(thana)
+  );
+
+  const results = $("results");
+  results.replaceChildren();
+
+  results.appendChild(element(
+    "h3",
+    "Search Results: " + matches.length + " জন Donor",
+    ""
+  ));
+
+  if (matches.length === 0) {
+    results.appendChild(element(
+      "p",
+      "কোনো Donor পাওয়া যায়নি। অন্য এলাকা নির্বাচন করে দেখুন।",
+      "message"
+    ));
+    return;
+  }
+
+  matches.forEach(d => {
+    const card = document.createElement("div");
+    card.className = "donor-card";
+
+    card.appendChild(element("h3", d.name));
+
+    const badge = element("span", d.bloodGroup, "blood");
+    const bloodRow = document.createElement("div");
+    bloodRow.appendChild(badge);
+    card.appendChild(bloodRow);
+
+    addInfo(card, "Phone Number", d.phone);
+    addInfo(card, "Age", ageFromDOB(d.dob));
+    addInfo(card, "Date of Birth", dateText(d.dob));
+    addInfo(card, "Last Donate Date", dateText(d.lastDonateDate));
+
+    const addressRow = document.createElement("div");
+    addressRow.className = "info";
+    addressRow.appendChild(element("b", "Address: "));
+
+    const addressBtn = element(
+      "button", d.address + " ▼", "address-btn"
+    );
+    addressBtn.type = "button";
+
+    const details = document.createElement("div");
+    details.className = "address-details";
+    details.appendChild(element("b", "District: "));
+    details.appendChild(document.createTextNode(d.district));
+    details.appendChild(document.createElement("br"));
+    details.appendChild(element("b", "Thana: "));
+    details.appendChild(document.createTextNode(d.thana));
+
+    addressBtn.addEventListener("click", () => {
+      const open = details.classList.toggle("show");
+      addressBtn.textContent = d.address + (open ? " ▲" : " ▼");
+    });
+
+    addressRow.appendChild(addressBtn);
+    addressRow.appendChild(details);
+    card.appendChild(addressRow);
+
+    const call = element("a", "☎ Call Donor", "call-btn");
+    call.href = "tel:" + d.phone;
+    card.appendChild(call);
+
+    results.appendChild(card);
+  });
+});
+
+loadDistricts();
+</script>
+
+<p style="text-align:center; margin-top:20px;">
+  <a href="./receiver-login.html"
+     style="color:red; text-decoration:none;">
+    ← Back to Receiver Login
+  </a>
+</p>
+
+</body>
+</html>

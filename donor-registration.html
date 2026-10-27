@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donor Registration - Blood Connect</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px 14px;
+  font-family: Arial, sans-serif;
+  background: #fff1f2;
+  color: #333;
+}
+
+.container {
+  max-width: 500px;
+  margin: 15px auto;
+  padding: 24px 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px #00000012;
+}
+
+h1 {
+  color: #dc2626;
+  text-align: center;
+  font-size: 25px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+label {
+  display: block;
+  margin: 17px 0 7px;
+  font-weight: bold;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+}
+
+input[type="file"] {
+  padding: 10px;
+}
+
+small {
+  color: #777;
+}
+
+button {
+  width: 100%;
+  margin-top: 24px;
+  padding: 14px;
+  border: none;
+  border-radius: 9px;
+  background: #dc2626;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #b91c1c;
+}
+
+#photoPreview {
+  display: none;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin-top: 12px;
+  border-radius: 50%;
+}
+
+#message {
+  margin-top: 18px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.back {
+  display: block;
+  margin-top: 20px;
+  text-align: center;
+  color: #c62828;
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🩸 Donor Registration</h1>
+<p class="subtitle">Blood Connect-এ রক্তদাতা হিসেবে নিবন্ধন করুন</p>
+
+<form id="donorForm">
+
+  <label for="name">Donor Name / পূর্ণ নাম *</label>
+  <input type="text" id="name" name="name"
+         placeholder="আপনার পূর্ণ নাম লিখুন" required>
+         
+  <label for="dob">Date of Birth / জন্মতারিখ *</label>
+  <input type="date" id="dob" name="dob" required>
+  
+  <label for="age">Age / বয়স *</label>
+  <input type="number" id="age" name="age"
+         min="18" max="100"
+         placeholder="বয়স লিখুন" required>
+
+  
+  <label for="nid">NID Number / Birth Certificate Number / এনআইডি বা জন্ম নিবন্ধন নম্বর *</label>
+  <input type="text" id="nid" name="nid"
+         placeholder="১০, ১৩ বা ১৭ সংখ্যার নম্বর লিখুন" required>
+
+  <label for="lastDate">Last Blood Donation Date / সর্বশেষ রক্তদানের তারিখ *</label>
+  <input type="date" id="lastDate" name="lastDate" required>
+
+  <label for="district">District / জেলা</label>
+      <select id="district" required>
+        <option value="">জেলা নির্বাচন করুন</option>
+        <option>Dhaka</option>
+      </select>
+
+      <label for="thana">Thana / থানা</label>
+      <select id="thana" required>
+        <option value="">থানা নির্বাচন করুন</option>
+        <option>Sabujbagh</option>
+        <option>Khilgone</option>
+        <option>Mugda</option>
+        <option>Motijheel</option>
+        <option>Jatrabari</option>    
+        <option>Polton</option>
+        <option>Gulistan</option>
+      </select>
+
+  <label for="phone">Phone Number / ফোন নম্বর *</label>
+  <input type="tel" id="phone" name="phone"
+         placeholder="01XXXXXXXXX"
+         pattern="01[0-9]{9}"
+         title="১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর লিখুন"
+         required>
+
+  <label for="blood">Blood Group / রক্তের গ্রুপ *</label>
+  <select id="blood" name="blood" required>
+    <option value="">রক্তের গ্রুপ নির্বাচন করুন</option>
+    <option>A+</option>
+    <option>A-</option>
+    <option>B+</option>
+    <option>B-</option>
+    <option>AB+</option>
+    <option>AB-</option>
+    <option>O+</option>
+    <option>O-</option>
+  </select>
+
+  <label for="gender">Gender / লিঙ্গ *</label>
+  <select id="gender" name="gender" required>
+    <option value="">লিঙ্গ নির্বাচন করুন</option>
+    <option value="পুরুষ">পুরুষ</option>
+    <option value="নারী">নারী</option>
+    <option value="অন্যান্য">অন্যান্য</option>
+  </select>
+
+  <label for="photo">Donor Photo / ছবি (ঐচ্ছিক)</label>
+  <input type="file" id="photo" name="photo"
+         accept="image/*">
+  <small>ছবি দেওয়া বাধ্যতামূলক নয়।</small>
+  <img id="photoPreview" alt="Donor photo preview">
+
+  <button type="submit">Register as Donor</button>
+
+</form>
+
+<div id="message" aria-live="polite"></div>
+
+<a class="back" href="index.html">← মূল পেজে ফিরে যান</a>
+
+</div>
+
+<script>
+const form = document.getElementById("donorForm");
+const dob = document.getElementById("dob");
+const age = document.getElementById("age");
+const lastDate = document.getElementById("lastDate");
+const photo = document.getElementById("photo");
+const preview = document.getElementById("photoPreview");
+const message = document.getElementById("message");
+
+const today = new Date().toISOString().split("T")[0];
+
+dob.max = today;
+lastDate.max = today;
+
+dob.addEventListener("change", function () {
+  if (!dob.value) return;
+
+  const birth = new Date(dob.value + "T00:00:00");
+  const now = new Date();
+  let years = now.getFullYear() - birth.getFullYear();
+
+  const beforeBirthday =
+    now.getMonth() < birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() &&
+     now.getDate() < birth.getDate());
+
+  if (beforeBirthday) years--;
+
+  age.value = years >= 0 ? years : "";
+});
+
+photo.addEventListener("change", function () {
+  const file = photo.files[0];
+
+  if (!file) {
+    preview.style.display = "none";
+    preview.removeAttribute("src");
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    alert("একটি ছবি নির্বাচন করুন।");
+    photo.value = "";
+    preview.style.display = "none";
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert("ছবির সাইজ ৫ MB-এর মধ্যে রাখুন।");
+    photo.value = "";
+    preview.style.display = "none";
+    return;
+  }
+
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+});
+
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  if (!form.reportValidity()) return;
+
+  // NID বা জন্ম নিবন্ধন নম্বর সঠিক ১০, ১৩ বা ১৭ ডিজিটের কিনা তা চেক করা হচ্ছে
+  const nidValue = document.getElementById("nid").value.trim();
+  const nidPattern = /^(\d{10}|\d{13}|\d{17})$/;
+
+  if (!nidPattern.test(nidValue)) {
+    alert("দয়া করে সঠিক ১০, ১৩ অথবা ১৭ সংখ্যার এনআইডি বা জন্ম নিবন্ধন নম্বর লিখুন।");
+    return;
+  }
+
+  if (Number(age.value) < 18) {
+    alert("রেজিস্ট্রেশনের জন্য কমপক্ষে ১৮ বছর হতে হবে।");
+    return;
+  }
+
+  if (dob.value > today) {
+    alert("জন্মতারিখ ভবিষ্যতের হতে পারে না।");
+    return;
+  }
+
+  if (lastDate.value > today) {
+    alert("রক্তদানের তারিখ ভবিষ্যতের হতে পারে না।");
+    return;
+  }
+
+  alert("Registration Complete! ধন্যবাদ।");
+
+  window.location.href = "index.html";
+});
+</script>
+
+</body>
+</html>

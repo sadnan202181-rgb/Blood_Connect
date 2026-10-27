@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blood Receiver Login</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #fff1f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 430px;
+      padding: 25px 20px;
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 5px 20px #00000012;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 45px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #dc2626;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 7px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .main-btn {
+      background: #dc2626;
+      color: white;
+    }
+
+    .secondary-btn {
+      background: white;
+      color: #dc2626;
+      border: 1px solid #dc2626;
+    }
+
+    .otp-section {
+      display: none;
+      margin-top: 22px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .notice {
+      margin-top: 20px;
+      padding: 12px;
+      background: #fff1f2;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    #message {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="logo">🩸</div>
+
+    <h2>Blood Receiver Login</h2>
+
+    <p class="subtitle">
+      আপনার পরিচয় ও মোবাইল নম্বর যাচাই করুন
+    </p>
+
+    <form id="receiverForm">
+
+      <label for="name">Full Name / সম্পূর্ণ নাম</label>
+      <input
+        type="text"
+        id="name"
+        placeholder="আপনার নাম লিখুন"
+        required
+      >
+
+      <label for="phone">Mobile Number / মোবাইল নম্বর</label>
+      <input
+        type="tel"
+        id="phone"
+        placeholder="01XXXXXXXXX"
+        inputmode="numeric"
+        pattern="01[0-9]{9}"
+        maxlength="11"
+        required
+      >
+
+      <label for="userType">আপনার পরিচয়?</label>
+      <select id="userType" required>
+        <option value="">নির্বাচন করুন</option>
+        <option value="student">Student / শিক্ষার্থী</option>
+        <option value="teacher">Teacher / শিক্ষক</option>
+        <option value="staff">Staff / কর্মচারী</option>
+      </select>
+
+      <label for="idNumber">
+        Student / Teacher / Staff ID Number
+      </label>
+      <input
+        type="text"
+        id="idNumber"
+        placeholder="আপনার ID নম্বর লিখুন"
+        required
+      >
+
+      <button type="submit" class="main-btn">
+        Send OTP
+      </button>
+
+    </form>
+
+    <div class="otp-section" id="otpSection">
+
+      <label for="otp">OTP Verification</label>
+
+      <input
+        type="text"
+        id="otp"
+        placeholder="৬ সংখ্যার OTP লিখুন"
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        maxlength="6"
+      >
+
+      <button
+        type="button"
+        class="main-btn"
+        id="verifyBtn">
+        Verify OTP
+      </button>
+
+      <p id="message" aria-live="polite"></p>
+    </div>
+
+    <div class="notice">
+      <strong>নিরাপত্তা:</strong>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page title</title>
+</head>
+<body>
+    <script>
+const form = document.getElementById("receiverForm");
+const otpSection = document.getElementById("otpSection");
+const otpInput = document.getElementById("otp");
+const message = document.getElementById("message");
+const verifyBtn = document.getElementById("verifyBtn");
+
+form.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  // OTP লেখার ঘর দেখাবে
+  otpSection.style.display = "block";
+
+  message.style.color = "#b45309";
+  message.textContent =
+    "Demo OTP: যেকোনো ৬ সংখ্যার কোড লিখুন।";
+
+  otpSection.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest"
+  });
+
+  otpInput.focus();
+});
+
+verifyBtn.addEventListener("click", function() {
+  const otp = otpInput.value.trim();
+
+  if (!/^[0-9]{6}$/.test(otp)) {
+    message.style.color = "#b91c1c";
+    message.textContent = "৬ সংখ্যার কোড লিখুন।";
+    return;
+  }
+// Demo OTP যাচাইয়ের পরে Search পেজে যাবে
+window.location.href = "receiver-search.html";
+});
+</script>
+</body>
+</html>      আপনার তথ্য পরিচয় যাচাইয়ের জন্য ব্যবহার করা �
